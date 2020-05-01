@@ -1,5 +1,7 @@
 from ManageCodeAnalysis import ManageCodeAnalysis
+from ManagePersistence import ManagePersistence
 from service.globalDatabaseAccess import GlobalDatabaseAccess
+from executeProjectCreationControl import ExecuteProjectCreationControl
 
 class CreateProjectControl:
     def __init__(self, project_id):
@@ -7,44 +9,55 @@ class CreateProjectControl:
         self.globalDatabaseAccess = GlobalDatabaseAccess()
 
     def createProject(self):
-        print("creating project...")
+        try:
+            projectDatabaseURL = self.getProjectDatabaseURL()
+            projectDatabaseUsername = self.getProjectDatabaseUsername()
+            projectDatabasePassword = self.getProjectDatabasePassword()
 
-        projectDatabaseURL = self.getProjectDatabaseCredentials()
-        #print(projectDatabaseURL)
-        projectGitURL = self.getProjectGitURL()
-        #print(projectGitURL)
+            projectGitURL = self.getProjectGitURL()
+            print("Step 0: connected to global database to get credentials and link to git repository")
 
-        managerepdata = ManageCodeAnalysis()
-        # managerepdata.getSourceCode(projectGitURL)
-        print("Downloaded project data...")
-        # managerepdata.getGitInfo(projectGitURL)
-        print("Cloned repository for dependency analysis")
-
-        # managerepdata.analyseDependencies()
-        print("Analysing Dependencies...")
-        # managerepdata.persData()
-        print("imported project data into neo4j")
-        # managerepdata.persPatternData()
-        print("imported pattern data into neo4j")
-        self.globalDatabaseAccess.close()
+            # manage all operations to create project
+            executeProjectCreation = ExecuteProjectCreationControl(projectDatabaseURL, projectDatabaseUsername, projectDatabasePassword)
+            executeProjectCreation.deleteDataFromProjectDatabase()
+            print("Step 1: cleaned project database")
+            # download source and save locally
+            executeProjectCreation.getSourceCode(projectGitURL)
+            print("Step 2: cloned git repository to temporary local folder")
+            # check if source is usable
+            executeProjectCreation.getGitInfo(projectGitURL)
+            print("Step 3: checked if class dependencies in given git repository can be analysed")
+            # execute dependency analysis
+            executeProjectCreation.analyseDependencies()
+            print("Step 4: analysed dependencies")
+            # persist projectdata in projectdatabase
+            executeProjectCreation.persistProjectData()
+            print("Step 5: persisted project data in project database")
+            # persist pattern data in projectdatabase
+            executeProjectCreation.persistPatternData()
+            print("Step 6: persisted pattern data in project database")
+            executeProjectCreation.deleteLocalProjectFolder()
+            print("Step 7: cleaned up temporary local project data")
+        except(Exception) as error:
+            print(error)
+        finally:
+            self.globalDatabaseAccess.close()
 
     def getProjectGitURL(self):
         query = "SELECT PROJECT_GITURL FROM PROJECT WHERE PROJECT_ID = {}".format(self.project_id)
-        print(query)
-        self.projectGitURL = self.globalDatabaseAccess.executeQuery(query)
-        print(self.projectGitURL)
+        return self.globalDatabaseAccess.executeQuery(query)
 
-
-    def getProjectDatabaseCredentials(self):
+    def getProjectDatabaseURL(self):
         query = "SELECT PROJECTDATABASE_URL FROM PROJECTDATABASE WHERE PROJECT_ID = {};".format(self.project_id)
-        print(query)
-        projectDatabaseURL = self.globalDatabaseAccess.executeQuery(query)
-        print(projectDatabaseURL)
+        return self.globalDatabaseAccess.executeQuery(query)
+
+    def getProjectDatabaseUsername(self):
         query = "SELECT PROJECTDATABASE_USER FROM PROJECTDATABASE WHERE PROJECT_ID = {};".format(self.project_id)
-        print(query)
-        projectDatabaseUser = self.globalDatabaseAccess.executeQuery(query)
-        print(projectDatabaseUser)
+        return self.globalDatabaseAccess.executeQuery(query)
+
+    def getProjectDatabasePassword(self):
         query = "SELECT PROJECTDATABASE_PASSWORD FROM PROJECTDATABASE WHERE PROJECT_ID = {};".format(self.project_id)
-        projectDatabasePassword = self.globalDatabaseAccess.executeQuery(query)
-        print(query)
-        print(projectDatabasePassword)
+        return self.globalDatabaseAccess.executeQuery(query)
+
+
+

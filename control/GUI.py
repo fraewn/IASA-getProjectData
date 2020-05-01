@@ -5,6 +5,7 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtWidgets import QWidget, QPushButton, QProgressBar, QLabel, QLineEdit, QMessageBox
 from ManageCodeAnalysis import ManageCodeAnalysis
+from createProjectControl import CreateProjectControl
 
 class ProSyWis_GUI(QWidget):
     def __init__(self):
@@ -43,9 +44,9 @@ class ProSyWis_GUI(QWidget):
         codeAnalysisLabel.setFont(myFont)
         codeAnalysisLabel.setGeometry(QtCore.QRect(10, 80, 95, 16))
         urlLabel = QLabel (self)
-        urlLabel.setGeometry(QtCore.QRect(30, 112, 55, 16))
+        urlLabel.setGeometry(QtCore.QRect(10, 112, 55, 20))
         urlLabel.setObjectName("linkLabel")
-        urlLabel.setText("Git-URL:")
+        urlLabel.setText("Proj_ID:")
         self.analyzeCodeButton = QPushButton ("Analyze Code",self)
         self.analyzeCodeButton.setGeometry(QtCore.QRect(150, 150, 101, 28))
         self.analyzeCodeButton.clicked.connect(self.pushAnalyzeCodeButton)
@@ -66,25 +67,28 @@ class ProSyWis_GUI(QWidget):
         try:
             response = requests.get("https://www.google.de/")
             try:
-             response = requests.get(link)
+             # response = requests.get(link)
              try:
+                 # trigger create project process
+                 createProjectControl = CreateProjectControl(link)
+                 createProjectControl.createProject()
                  time.sleep(1);
-                 managerepdata = ManageCodeAnalysis()
-                 managerepdata.getSourceCode(link)
-                 self.progressBar.setProperty("value", 20)
-                 time.sleep(6);
-                 managerepdata.getGitInfo(link)
+                 #managerepdata = ManageCodeAnalysis()
+                 #managerepdata.getSourceCode(link)
+                 #self.progressBar.setProperty("value", 20)
+                 #time.sleep(6);
+                 #managerepdata.getGitInfo(link)
                  try:
-                     self.progressBar.setProperty("value", 40)
-                     time.sleep(1);
-                     managerepdata.analyseDependencies()
-                     self.progressBar.setProperty("value", 60)
-                     time.sleep(1);
-                     managerepdata.persData()
-                     self.progressBar.setProperty("value", 80)
-                     time.sleep(1);
-                     managerepdata.persPatternData()
-                     self.progressBar.setProperty("value", 100)
+                     #self.progressBar.setProperty("value", 40)
+                     #time.sleep(1);
+                     #managerepdata.analyseDependencies()
+                     #self.progressBar.setProperty("value", 60)
+                     #time.sleep(1);
+                     #managerepdata.persData()
+                     #self.progressBar.setProperty("value", 80)
+                     #time.sleep(1);
+                     #managerepdata.persPatternData()
+                     #self.progressBar.setProperty("value", 100)
                      buttonSuccess = QMessageBox.question (self,'Success', "Code Analysis successful!",
                                               QMessageBox.Ok , QMessageBox.Ok)
                  except:
