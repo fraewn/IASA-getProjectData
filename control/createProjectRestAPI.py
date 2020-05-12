@@ -120,6 +120,8 @@ api.add_resource(projectList, '/projects')
 api.add_resource(project, '/projects/<request_id>')
 
 # run
+# https://www.modius-techblog.de/devops/python-flask-app-mit-docker-deployen/
+# why we need the host='0.0.0.0'
 if __name__ == '__main__':
     # set debug mode to false
     app.run(host='0.0.0.0', debug=False)
