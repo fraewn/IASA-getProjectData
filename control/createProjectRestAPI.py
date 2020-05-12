@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask
 from flask_restful import reqparse, abort, Api, Resource
 from createProjectControl import CreateProjectControl
 
@@ -122,4 +122,4 @@ api.add_resource(project, '/projects/<request_id>')
 # run
 if __name__ == '__main__':
     # set debug mode to false
-    app.run(debug=False)
+    app.run(host='0.0.0.0', debug=False)

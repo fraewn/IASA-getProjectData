@@ -122,4 +122,4 @@ api.add_resource(project, '/update_projects/<request_id>')
 # run
 if __name__ == '__main__':
     # set debug mode to false
-    app.run(debug=False)
+    app.run(host='0.0.0.0', debug=False)
