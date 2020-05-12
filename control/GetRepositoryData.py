@@ -1,8 +1,6 @@
 # imports
 from pydriller import RepositoryMining
 
-
-
 # class responsible for retreiving data from git repository
 class GetRepositoryData:
 

@@ -8,7 +8,6 @@ class ManagePersistence:
     def init_connection(self, uri, userName, password):
         self.projectDatabaseAccess = DatabaseAccess(uri, userName, password)
 
-
     def process_persisting(self, filename):
         # produce a project database query for each file and save in array "queries"
         queries = self.produceQueries.create_git_info_queries(filename)

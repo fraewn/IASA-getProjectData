@@ -1,5 +1,3 @@
-from ManageCodeAnalysis import ManageCodeAnalysis
-from ManagePersistence import ManagePersistence
 from service.globalDatabaseAccess import GlobalDatabaseAccess
 from executeProjectCreationControl import ExecuteProjectCreationControl
 

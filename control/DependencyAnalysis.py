@@ -2,7 +2,7 @@ from xml.etree import ElementTree
 import csv
 import subprocess
 
-from service.util.credentials import Credentials
+from service.util.util import Util
 
 class DependencyAnalysis:
     def analyseDependencies (self):
@@ -10,12 +10,12 @@ class DependencyAnalysis:
         subprocess.call(['java', '-jar', 'DependencyAnalysis.jar'])
 
     def formatDependenciesClean (self):
-        credentials = Credentials ()
+        util = Util()
         #Open result csv file
-        with open(credentials.getDependencyAnalysisLink() + '/result/dependencymatrix.csv', 'w') as csvfile:
+        with open(util.getDependencyAnalysisLink() + '/result/dependencymatrix.csv', 'w') as csvfile:
             writer = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
             #parsing of the DAAccess result file
-            tree = ElementTree.parse(credentials.getDependencyAnalysisLink() + '/result/result.odem')
+            tree = ElementTree.parse(util.getDependencyAnalysisLink() + '/result/result.odem')
             tree.getroot()
             #select relevant results and write into result csv file
             for child in tree.iter('type'):
@@ -35,10 +35,10 @@ class DependencyAnalysis:
 
 
     def formatDependencies (self):
-        credentials = Credentials ()
-        with open(credentials.getDependencyAnalysisLink() + '/result/dependencymatrix.csv', 'w') as csvfile:
+        util = Util()
+        with open(util.getDependencyAnalysisLink() + '/result/dependencymatrix.csv', 'w') as csvfile:
             writer = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-            tree = ElementTree.parse(credentials.getDependencyAnalysisLink() + "/result/result.odem")
+            tree = ElementTree.parse(util.getDependencyAnalysisLink() + "/result/result.odem")
             tree.getroot()
             for child in tree.iter('type'):
                 for subchild in child.iter('depends-on'):

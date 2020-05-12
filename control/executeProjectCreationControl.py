@@ -28,6 +28,7 @@ class ExecuteProjectCreationControl:
         # init project database connection
         self.managePersistence.init_connection(projectdatabase_url, projectdatabase_username, projectdatabase_password)
 
+    # used
     def getSourceCode (self, projectGitURL):
         # prepare working directory for cloning a git project into it
         self.cleanUpFolder(self.link_to_home_directory)
@@ -38,6 +39,7 @@ class ExecuteProjectCreationControl:
         if (self.compiledFilesExist(self.link_to_home_directory)) is not True:
            raise Exception ('No compiled files found! Please provide a project with compiled java code.')
 
+    # benutzt die pydriller Klasse
     def getGitInfo(self, path):
         os.makedirs(self.link_to_home_directory + "/result")
         with open(self.link_to_home_directory + "/result/rawrepdatacsv.csv" , 'w'):
@@ -84,7 +86,6 @@ class ExecuteProjectCreationControl:
         if os.path.isdir(linkgit):
             call(['attrib', '-H', linkgit])
             for root, dirs, files in os.walk(linkgitobjpack):
-
                 for f in files:
                     os.chmod(root +"/" + f,stat.S_IWRITE)
                     os.unlink(root +"/"+ f)
@@ -103,6 +104,7 @@ class ExecuteProjectCreationControl:
         if(os.path.exists(self.link_to_home_directory)):
             shutil.rmtree(self.link_to_home_directory)
 
+    # used
     def deleteDataFromProjectDatabase(self):
         # clean up database
         self.managePersistence.deleteProject()
