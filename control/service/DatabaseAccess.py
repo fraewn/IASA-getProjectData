@@ -14,3 +14,7 @@ class DatabaseAccess:
     def executequery(self, query):
         with self._driver.session() as graphDB_Session:
             graphDB_Session.run(query)
+
+    def executeQueryWithResult(self, query):
+        with self._driver.session() as graphDB_Session:
+            return graphDB_Session.run(query)

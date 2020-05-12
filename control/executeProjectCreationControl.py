@@ -14,12 +14,19 @@ class ExecuteProjectCreationControl:
 
     def __init__(self, projectdatabase_url, projectdatabase_username, projectdatabase_password):
         # set class variables
-        util = Util()
-        # analyse os and get link to home directory to save project data temporarily
-        self.link_to_home_directory = util.getDependencyAnalysisLink()
+        self.util = Util()
         self.managePersistence = ManagePersistence()
-        self.managePersistence.init_connection(projectdatabase_url, projectdatabase_username, projectdatabase_password)
         self.dependencyAnalysis = DependencyAnalysis()
+
+        # get environment
+        self.link_to_home_directory = self.util.getDependencyAnalysisLink()
+
+        # set paths to local project data
+        self.class_csv = self.link_to_home_directory + '/result/rawrepdatacsv.csv'
+        self.dependency_csv = self.link_to_home_directory + '/result/dependencymatrix.csv'
+
+        # init project database connection
+        self.managePersistence.init_connection(projectdatabase_url, projectdatabase_username, projectdatabase_password)
 
     def getSourceCode (self, projectGitURL):
         # prepare working directory for cloning a git project into it
@@ -45,6 +52,14 @@ class ExecuteProjectCreationControl:
         self.managePersistence.process_dependency_persisting(self.link_to_home_directory + '/result/dependencymatrix.csv')
         # set a default password for the developer
         self.managePersistence.setDeveloperDefaultPassword()
+
+    def updateProjectFiles(self):
+        # check if file already exists and if not, persist it
+        self.managePersistence.checkFileExists(self.class_csv)
+
+    def updateProjectDependencies(self):
+        # check if relation already exists and if not, persist it
+        self.managePersistence.checkRelationExists(self.dependency_csv)
 
     def persistPatternData (self):
         self.managePersistence.process_patterns_persisting()

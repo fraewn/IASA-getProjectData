@@ -1,6 +1,50 @@
 import csv
 
 class ProduceQueries:
+    def createFileQueries(self, filepath, filename, changetype):
+        # store queries in array
+        queries = []
+        # iterate through rows in csv file
+        if changetype == "ModificationType.ADD":
+            # create query to add two nodes and their edge
+            query = "CREATE (file:File {filename: '" + filename + "'})"
+            print(query)
+            queries.append(query)
+        if changetype == "ModificationType.DELETE":
+            query = "MATCH (n { name: '" + filename + \
+                    "'}) DETACH DELETE n"
+            print(query)
+            queries.append(query)
+        # return array with all queries
+        return queries
+
+
+    def createCheckFileExistQueries(self, filepath):
+        with open(filepath, 'r') as f:
+            csvreader = csv.reader(f, delimiter=';')
+            # store queries in array
+            queries = []
+            filearray = []
+            # iterate through rows in csv file
+            next(csvreader, None) # skip headers
+            for row in csvreader:
+                # assign variables to cells in columns
+                # save all files we already checked
+                filename = row[0]
+                if filename not in filearray:
+                    if filename.__contains__('.java'):
+                        # find latest update of file in csv
+                        latestrow = self.findLatestRow(filepath, filename)
+                        latestFile = latestrow[0]
+                        filearray.append(latestFile)
+                        latestChangeType = latestrow[4]
+                        query = "match(n:File {filename:'" + latestFile + "'}) return n"
+                        list = [latestFile, latestChangeType, query]
+                        queries.append(list)
+            # return array with all queries
+            print(str(queries))
+            return queries
+
     def create_git_info_queries(self, filename):
         with open(filename, 'r') as f:
             csvreader = csv.reader(f, delimiter=';')
@@ -50,6 +94,44 @@ class ProduceQueries:
                 dependencyqueries.append(query)
             #return array with all queries
             return dependencyqueries
+
+    def createCheckRelationExistsQueries(self, filename):
+        with open(filename, 'r') as f:
+            csvreader = csv.reader(f, delimiter=';')
+            # store queries in array
+            queries = []
+            # iterate through rows in csv file
+            for row in csvreader:
+                class1 = row[0]
+                class2 = row[1]
+                relation = row[2]
+                relationup = relation.upper()
+                query = "match(n:File {filename:'" + class1 + "'})" \
+                        "-[r:" + relationup + "]->(m:File {filename:'" + class2 + "'}) return n,r,m"
+                list = [class1, class2, relationup, query]
+                print(str(list))
+                queries.append(list)
+            # return array with all queries
+            return queries
+
+    def writeRelationExists(self, rownumber, filename, class1, class2, relation):
+        with open(filename, 'w', newline='') as f:
+            print("hllo")
+
+    def findLatestRow(self, filepath, filename):
+        with open(filepath, 'r') as f:
+            csvreader = csv.reader(f, delimiter=';')
+            # iterate through rows in csv file
+            next(csvreader, None) # skip headers
+            rownumber = 0
+            for row in csvreader:
+                # assign variables to cells in columns
+                if filename == row[0]:
+                    rownumber = row
+            return rownumber
+
+
+
 
     def create_patterns_queries (self):
         patternsqueries = []
