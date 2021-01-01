@@ -74,7 +74,7 @@ class ExecuteProjectCreationControl:
         for root, dirs, files in os.walk(link):
             for name in files:
                 if ".class" in name:
-                    print (name)
+                    print(name)
                     return True
         return False
 
